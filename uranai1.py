@@ -1,36 +1,50 @@
 import tkinter as tk
+import os.path
 import random
 
-def uranau():
-    # 占いを実行
-    show_kuji["text"] = random.choice(kujis)
-    
-def clear():
-    # 占いをクリア
-		show_kuji["text"] = ""
+class Uranai(tk.Frame):
+	def __init__(self, master):
+		super().__init__(master, padx=10, pady=10)
+		self.pack()
+		# ボタンを配置するフレームワーク
+		self.btn_frame = tk.Frame(self, padx=10, pady=20)
+		self.btn_frame.pack()
+		# 「占う」ボタン
+		self.uranau_btn = tk.Button(self.btn_frame, text="占う", command=self.uranau)
+		self.uranau_btn.pack(side='left')
+		# 「クリア」ボタン
+		self.clear_btn = tk.Button(self.btn_frame, text="クリア", command=self.clear)
+		self.clear_btn.pack(side='left')
+		# デフォルトのイメージの読み込み（パスの相違を吸収）
+		self.default_img = tk.PhotoImage(
+        file=os.path.join(os.path.dirname(__file__), "kujis/empty.png")
+		)
+		# くじの４つのイメージファイル
+		self.kujis = [tk.PhotoImage(file=os.path.join(
+				os.path.dirname(__file__), "kujis/kyo.png")),
+				tk.PhotoImage(file=os.path.join(
+				os.path.dirname(__file__), "kujis/syoukiti.png")),
+				tk.PhotoImage(file=os.path.join(
+				os.path.dirname(__file__), "kujis/chukiti.png")),
+				tk.PhotoImage(file=os.path.join(
+				os.path.dirname(__file__), "kujis/daikiti.png")),]
+		# 占い結果を表示するラベル
+		self.show_kuji = tk.Label(self, image=self.default_img)
+		self.show_kuji.pack()
 
-# メインウィンドウ
-root = tk.Tk()
-# タイトル
-root.title("おみくじ")
+	def uranau(self):
+			# 占いを実行
+			self.show_kuji["image"] = random.choice(self.kujis)
+			
+	def clear(self):
+			# 占いをクリア
+			self.show_kuji["image"] = self.default_img
 
-# くじの中身
-kujis = ["大吉", "中吉", "小吉", "凶"]
-
-# ボタンを配置するフレームワーク
-btn_frame = tk.Frame(root, padx=10, pady=20)
-btn_frame.pack()
-
-# 「占う」ボタン
-uranau__btn = tk.Button(btn_frame, text="占う", command=uranau, bg="lightblue")
-uranau__btn.pack(side='left')
-# 「クリア」ボタン
-clear_btn = tk.Button(btn_frame, text="クリア", command=clear, bg="yellow")
-clear_btn.pack(side='left')
-
-# 占い結果を表示するラベル
-show_kuji = tk.Label(root, image="", font=("helvetica", 30, "bold"))
-show_kuji.pack()
-
-# メインループ
-root.mainloop()
+if __name__ == '__main__':
+	# メインウィンドウ
+	root = tk.Tk()
+	# タイトル
+	root.title("おみくじ")
+	app = Uranai(root)
+	# メインループ
+	root.mainloop()
